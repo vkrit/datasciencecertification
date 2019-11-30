@@ -1,0 +1,57 @@
+---
+title: "Workshop 3 Solutions"
+author: "Veerasak Kritsanapraphan"
+date: ''
+output:
+  word_document: 
+    highlight: zenburn
+  pdf_document: default
+  html_document: 
+    highlight: kate
+    theme: cosmo
+---
+
+Here's an R code chunk that prints the text 'Hello world!'.
+
+```{r}
+print("Hello world!")
+```
+
+<br>
+
+### 1.  Creating sequences
+We just learned about the `c()` operator, which forms a vector from its arguments.  If we're trying to build a vector containing a sequence of numbers, there are several useful functions at our disposal.  These are the colon operator `:` and the sequence function `seq()`.
+
+##### `:` Colon operator: 
+```{r}
+1:10 # Numbers 1 to 10
+127:132 # Numbers 127 to 132
+```
+
+##### `seq` function: `seq(from, to, by)`
+```{r}
+seq(1,10,1) # Numbers 1 to 10
+seq(1,10,2) # Odd numbers from 1 to 10
+seq(2,10,2) # Even numbers from 2 to 10
+```
+
+> To learn more about a function, type `?functionname` into your console.  E.g., `?seq` pulls up a Help file with the R documentation for the `seq` function.
+
+#### (a) Use `:` to output the sequence of numbers from 3 to 12
+```{r}
+3:12
+```
+
+#### (b) Use `seq()` to output the sequence of numbers from 3 to 30 in increments of 3
+```{r}
+seq(3, 30, 3)
+```
+
+#### (c) Save the sequence from (a) as a variable `x`, and the sequence from (b) as a variable `y`.  Output their product `x*y`
+```{r}
+x <- 3:12
+y <- seq(3, 30, 3)
+x * y
+```
+
+<br>
