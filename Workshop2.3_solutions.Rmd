@@ -1,0 +1,85 @@
+---
+title: "Workshop 2.3"
+author: "Veerasak Kritsanapraphan"
+date: "12/21/2019"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## HR Analysis
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(purrr)
+library(PerformanceAnalytics)
+```
+
+```{r}
+hremployee <- read.csv("WA_Fn-UseC_-HR-Employee-Attrition.csv", 
+                       header=TRUE)
+hremployee$Education = as.factor(hremployee$Education)
+hremployee$EnvironmentSatisfaction = as.factor(hremployee$EnvironmentSatisfaction)
+hremployee$JobInvolvement = as.factor(hremployee$JobInvolvement)
+hremployee$JobLevel = as.factor(hremployee$JobLevel)
+hremployee$JobSatisfaction = as.factor(hremployee$JobSatisfaction)
+hremployee$RelationshipSatisfaction = as.factor(hremployee$RelationshipSatisfaction)
+hremployee$StockOptionLevel = as.factor(hremployee$StockOptionLevel)
+hremployee$WorkLifeBalance = as.factor(hremployee$WorkLifeBalance)
+
+str(hremployee)
+table(hremployee$Attrition)
+
+```
+
+## Exploratory Data Analysis
+
+### Plot Single Variable - Histogram
+```{r}
+hremployee %>%
+  keep(is.numeric) %>%                     # Keep only numeric columns
+  gather() %>%                             # Convert to key-value pairs
+  ggplot(aes(value)) +                     # Plot the values
+    facet_wrap(~ key, scales = "free") +   # In separate panels
+    geom_histogram(binwidth = 10) 
+```
+
+### Plot Single Variable - Density Curve
+```{r}
+hremployee %>%
+  keep(is.numeric) %>%                     # Keep only numeric columns
+  gather() %>%                             # Convert to key-value pairs
+  ggplot(aes(value)) +                     # Plot the values
+    facet_wrap(~ key, scales = "free") +   # In separate panels
+    geom_density() 
+```
+
+### Plot Single Variable - Bar Chart
+```{r}
+hremployee %>%
+  keep(is.factor) %>%                     # Keep only numeric columns
+  gather() %>%                             # Convert to key-value pairs
+  ggplot(aes(value)) +                     # Plot the values
+    facet_wrap(~ key, scales = "free") +   # In separate panels
+    geom_bar() 
+```
+
+## Performance Analytics 
+```{r message=FALSE, warning=FALSE}
+hremployee %>%
+  keep(is.numeric) %>%
+  chart.Correlation(histogram = TRUE)
+```
+
+## Interactive Chart
+```{r}
+library(rgl)
+plot3d(x=hremployee$Age, y=hremployee$DistanceFromHome, z=hremployee$DailyRate)
+writeWebGL(filename="3dscatter.html", width=800, height=600)
+```
