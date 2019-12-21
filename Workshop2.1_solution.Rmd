@@ -1,0 +1,33 @@
+---
+title: "Workshop 2.1"
+author: "Veerasak Kritsanapraphan"
+date: "12/18/2019"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## HR Analysis
+
+```{r}
+library(ggplot2)
+hremployee <- read.csv("WA_Fn-UseC_-HR-Employee-Attrition.csv", 
+                       header=TRUE)
+hremployee$Education = as.factor(hremployee$Education)
+hremployee$EnvironmentSatisfaction = as.factor(hremployee$EnvironmentSatisfaction)
+hremployee$JobInvolvement = as.factor(hremployee$JobInvolvement)
+hremployee$JobLevel = as.factor(hremployee$JobLevel)
+hremployee$JobSatisfaction = as.factor(hremployee$JobSatisfaction)
+hremployee$RelationshipSatisfaction = as.factor(hremployee$RelationshipSatisfaction)
+hremployee$StockOptionLevel = as.factor(hremployee$StockOptionLevel)
+hremployee$WorkLifeBalance = as.factor(hremployee$WorkLifeBalance)
+
+str(hremployee)
+table(hremployee$Attrition)
+
+```
+
