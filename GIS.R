@@ -63,7 +63,7 @@ leaflet(data = bangkok_shape_wgs84) %>%
                                                   bringToFront = TRUE)) %>%
   frameWidget()
 
-bins <- c(0, 100000, 1000000, 10000000, 100000000, 1000000000 Inf)
+bins <- c(0, 100000, 1000000, 10000000, 100000000, 1000000000, Inf)
 pal <- colorBin("RdYlBu", domain = bangkok_shape_wgs84$Shape_Area, 
                 bins = bins)
 
