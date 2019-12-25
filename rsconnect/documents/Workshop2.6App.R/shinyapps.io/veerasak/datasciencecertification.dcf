@@ -1,0 +1,13 @@
+name: datasciencecertification
+title: datasciencecertification
+username:
+account: veerasak
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1614812
+bundleId: 2684980
+url: https://veerasak.shinyapps.io/datasciencecertification/
+when: 1576916005.4317
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|3dscatter.html|app.R|bank-full.csv|bank.csv|bikes.csv|cherry.csv|crashes.csv|Data Science Certification Module 1.pdf|Data Science Certification Module 2.1.pdf|Data Science Certification Module 2.pdf|dbapp.R|GDP.csv|immigration_arrests.csv|iris.data.csv|LICENSE|README.md|recommendation.csv|rnotebook.nb.html|rnotebook.Rmd|sample.csv|sampleapp.R|ShinyApp.R|student-mat.csv|survey_data.csv|survey_data.xlsx|survey_messy.csv|survey_untidy.csv|titanic-test.csv|titanic-train.csv|Untitled.ipynb|WA_Fn-UseC_-HR-Employee-Attrition.csv|WA_Fn-UseC_-Sales-Win-Loss.csv|WA_Fn-UseC_-Telco-Customer-Churn.csv|workshop2_solution.Rmd|Workshop2.1_solution.docx|Workshop2.1_solution.html|Workshop2.1_solution.Rmd|Workshop2.2_solutions.docx|Workshop2.2_solutions.html|Workshop2.2_solutions.Rmd|Workshop2.3_solutions.docx|Workshop2.3_solutions.html|Workshop2.3_solutions.Rmd|Workshop2.7App.R|Workshop2.8App.R|workshop3_solution.Rmd|workshop4_solution.docx|workshop4_solution.nb.html|workshop4_solution.Rmd|workshop5_solution.pdf|workshop5_solution.Rmd|workshop6_solution.docx|workshop6_solution.Rmd|.ipynb_checkpoints/Untitled-checkpoint.ipynb|immigration/app.R|immigration/arrestLocations.csv|immigration/arrests.csv|immigration/Illegal_Immigration.R|immigration/Illegal_Immigration2.R

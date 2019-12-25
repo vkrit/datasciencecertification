@@ -3,6 +3,7 @@ library(dplyr)
 library(ggplot2)
 
 bcl <- read.csv("bcl-data.csv", stringsAsFactors = FALSE)
+bcl
 
 ui <- fluidPage(
   titlePanel("BC Liquor Store prices"),
@@ -10,10 +11,10 @@ ui <- fluidPage(
     sidebarPanel(
       sliderInput("priceInput", "Price", 0, 100, c(25, 40), pre = "$"),
       radioButtons("typeInput", "Product type",
-                   choices = c("BEER", "REFRESHMENT", "SPIRITS", "WINE"),
-                   selected = "WINE"),
+                   choices = unique(bcl$Type),
+                   selected = unique(bcl$Type)[1]),
       selectInput("countryInput", "Country",
-                  choices = c("CANADA", "FRANCE", "ITALY"))
+                  choices = unique(bcl$Country))
     ),
     mainPanel(
       plotOutput("coolplot"),
