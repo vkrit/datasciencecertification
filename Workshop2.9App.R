@@ -2,25 +2,29 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 library(DT)
+library(shinydashboard)
 
 bcl <- read.csv("bcl-data.csv", stringsAsFactors = FALSE)
 
-ui <- fluidPage(
-  titlePanel("BC Liquor Store prices"),
-  sidebarLayout(
-    sidebarPanel(
-      sliderInput("priceInput", "Price", 0, 100, c(25, 40), pre = "$"),
-      radioButtons("typeInput", "Product type",
-                   choices = c("BEER", "REFRESHMENT", "SPIRITS", "WINE"),
-                   selected = "WINE"),
-      selectInput("countryInput", "Country",
-                  choices = c("CANADA", "FRANCE", "ITALY"))
-    ),
-    mainPanel(
-      plotOutput("coolplot"),
-      br(), br(),
-      DT::dataTableOutput("results")
-    )
+ui <- dashboardPage(skin = "green",
+  dashboardHeader(title="BC Liquor Store prices"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Inputs", icon = icon("bar-chart-o"),
+               # Input directly under menuItem
+               sliderInput("priceInput", "Price", 0, 100, c(25, 40), pre = "$"),
+               radioButtons("typeInput", "Product type",
+                            choices = c("BEER", "REFRESHMENT", "SPIRITS", "WINE"),
+                            selected = "WINE"),
+               selectInput("countryInput", "Country",
+                           choices = c("CANADA", "FRANCE", "ITALY"))
+               
+               )
+      )
+  ),
+  dashboardBody(
+    box(title = "Plot",fluidRow(plotOutput("coolplot")), offset = 0, width=12),
+    box(title = "Table",fluidRow(DT::dataTableOutput("results")), offset = 0, width=12)
   )
 )
 
