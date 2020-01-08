@@ -1,0 +1,81 @@
+---
+title: "R and MS SQL Server"
+author: "Veerasak Kritsanapraphan"
+date: "8/1/2019"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Using ODBC
+
+R can use ODBC to connect to MS SQLServer, starting with loading odbc library
+
+```{r}
+library(odbc)
+```
+
+## Create Connection String
+
+```{r}
+con <- dbConnect(odbc(),
+                 #Driver = "Simba SQL Server ODBC Driver",
+                 Driver = "ODBC Driver 17 for SQL Server",
+                 Server = "veedb.database.windows.net",
+                 Database = "datasciencedb",
+                 UID = "veerasak",
+                 PWD = "#admin1234", ##PWD = rstudioapi::askForPassword("Database password"),
+                 Port = 1433)
+```
+
+## Query Database
+
+query database and save it to Data Frame
+
+```{r}
+customer <- dbGetQuery(con, "SELECT * FROM SalesLT.Customer")
+```
+
+## Show Structure of Data
+```{r}
+str(customer)
+```
+
+## Show Data
+```{r}
+head(customer)
+```
+
+```{r}
+customer.address <- dbGetQuery(con, "SELECT * FROM SalesLT.CustomerAddress")
+```
+
+## Show Structure of Data
+```{r}
+str(customer.address)
+```
+
+## Show Data
+```{r}
+head(customer.address)
+```
+
+## Merge Data
+```{r}
+customer.all <- merge(customer, customer.address, by.x="CustomerID", by.y="CustomerID")
+```
+
+## Show Data
+```{r}
+head(customer.all)
+```
+
+## Disconnect it
+
+```{r}
+dbDisconnect(con)
+```
