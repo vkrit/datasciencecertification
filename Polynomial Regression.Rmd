@@ -16,7 +16,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(modelr)
-theme_set(theme_classic())
+library(broom)
+library(dplyr)
+library(ggplot2)
 ```
 
 ### Preparing the data
@@ -62,6 +64,11 @@ linearmodel <- data.frame(
 linearmodel
 ```
 
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
 ### Visualize the data:
 
 ```{r}
@@ -105,11 +112,6 @@ From the output above, it can be seen that polynomial terms beyond the fith orde
 model <- lm(medv ~ poly(lstat, 5, raw = TRUE), data = Boston)
 ```
 
-### Make predictions
-```{r}
-predictions <- model %>% predict(Boston)
-```
-
 ### Model performance
 ```{r}
 polymodel <- data.frame(
@@ -119,6 +121,11 @@ polymodel <- data.frame(
   MAE = mae(model, data=Boston)
 )
 polymodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
 ```
 
 Visualize the fith polynomial regression line as follow:
@@ -136,10 +143,6 @@ When you have a non-linear relationship, you can also try a logarithm transforma
 ```{r}
 model <- lm(medv ~ log(lstat), data = Boston)
 ```
-### Make predictions
-```{r}
-predictions <- model %>% predict(Boston)
-```
 
 ### Model performance
 ```{r}
@@ -150,6 +153,11 @@ logmodel <- data.frame(
   MAE = mae(model, data=Boston)
 )
 logmodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
 ```
 
 Visualize the data:
@@ -182,10 +190,6 @@ library(splines)
 knots <- quantile(Boston$lstat, p = c(0.25, 0.5, 0.75))
 model <- lm (medv ~ bs(lstat, knots = knots), data = Boston)
 ```
-#### Make predictions
-```{r}
-predictions <- model %>% predict(Boston)
-```
 
 #### Model performance
 ```{r}
@@ -197,6 +201,12 @@ splinemodel <- data.frame(
 )
 splinemodel
 ```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
 
 Note that, the coefficients for a spline term are not interpretable.
 
@@ -232,6 +242,11 @@ GAMmodel <- data.frame(
 )
 GAMmodel
 ```
+
+```{r}
+glance(model) 
+```
+
 The term s(lstat) tells the gam() function to find the best knots for a spline term.
 
 Visualize the data:

@@ -88,3 +88,7 @@ summary(both)
 ```{r}
 car::vif(both)
 ```
+
+```{r}
+car::vif(forwards)
+```
