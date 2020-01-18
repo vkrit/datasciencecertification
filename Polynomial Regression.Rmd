@@ -3,8 +3,9 @@ title: "Polynomial Regression"
 author: "Veerasak Kritsanapraphan"
 date: "1/17/2020"
 output:
-  html_document: default
+  word_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}

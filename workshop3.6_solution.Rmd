@@ -1,0 +1,253 @@
+---
+title: "Polynomial Regression"
+author: "Veerasak Kritsanapraphan"
+date: "1/17/2020"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Loading Required R packages
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(modelr)
+library(broom)
+library(dplyr)
+library(ggplot2)
+```
+
+#### Load the data
+```{r}
+data("Wage", package = "ISLR")
+```
+
+First, visualize the scatter plot of the medv vs lstat variables as follow:
+
+```{r}
+ggplot(Wage, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth()
+```
+
+The above scatter plot suggests a non-linear relationship between the two variables
+
+In the following sections, we start by computing linear and non-linear regression models. Next, we’ll compare the different models in order to choose the best one for our data.
+
+## Linear regression
+The standard linear regression model equation can be written as wage = b0 + b1*age.
+
+### Compute linear regression model:
+
+### Build the model
+```{r}
+model <- lm(wage ~ age, data = Wage)
+```
+
+### Model performance
+```{r}
+linearmodel <- data.frame(
+  name = 'Linear Regression model',
+  R2 = rsquare(model, data=Wage),
+  RMSE = rmse(model, data=Wage),
+  MAE = mae(model, data=Wage)
+)
+linearmodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
+### Visualize the data:
+
+```{r}
+
+ggplot(Wage, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ x)
+```
+
+## Polynomial regression
+The polynomial regression adds polynomial or quadratic terms to the regression equation as follow:
+
+wage=b0+b1∗age+b2∗age2
+
+In R, to create a predictor x^2 you should use the function I(), as follow: I(x^2). This raise x to the power 2.
+
+The polynomial regression can be computed in R as follow:
+
+```{r}
+lm(wage ~ age + I(age^2), data = Wage)
+```
+
+An alternative simple solution is to use this:
+
+```{r}
+lm(wage ~ poly(age, 2, raw = TRUE), data = Wage)
+```
+
+The following example computes a sixfth-order polynomial fit:
+
+```{r}
+lm(wage ~ poly(age, 6, raw = TRUE), data = Wage) %>%
+  summary()
+```
+
+### Build the fifth polynomial model
+
+```{r}
+model <- lm(wage ~ poly(age, 5, raw = TRUE), data = Wage)
+```
+
+### Model performance
+```{r}
+polymodel <- data.frame(
+  name = 'Polynomial Regression model',
+  R2 = rsquare(model, data=Wage),
+  RMSE = rmse(model, data=Wage),
+  MAE = mae(model, data=Wage)
+)
+polymodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
+Visualize the fith polynomial regression line as follow:
+
+```{r}
+ggplot(Wage, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ poly(x, 5, raw = TRUE))
+```
+
+## Log transformation
+When you have a non-linear relationship, you can also try a logarithm transformation of the predictor variables:
+
+### Build the model
+```{r}
+model <- lm(wage ~ log(age), data = Wage)
+```
+
+### Model performance
+```{r}
+logmodel <- data.frame(
+  name = 'Log Transform Regression model',
+  R2 = rsquare(model, data=Wage),
+  RMSE = rmse(model, data=Wage),
+  MAE = mae(model, data=Wage)
+)
+logmodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
+Visualize the data:
+```{r}
+ggplot(Wage, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ log(x))
+```
+
+## Spline regression
+
+
+```{r}
+knots <- quantile(Wage$age, p = c(0.25, 0.5, 0.75))
+```
+
+We’ll create a model using a cubic spline (degree = 3):
+
+```{r message=FALSE, warning=FALSE}
+library(splines)
+```
+#### Build the model
+```{r}
+knots <- quantile(Wage$age, p = c(0.25, 0.5, 0.75))
+model <- lm (wage ~ bs(age, knots = knots), data = Wage)
+```
+
+#### Model performance
+```{r}
+splinemodel <- data.frame(
+  name = 'Splines model',
+  R2 = rsquare(model, data=Wage),
+  RMSE = rmse(model, data=Wage),
+  MAE = mae(model, data=Wage)
+)
+splinemodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
+
+Note that, the coefficients for a spline term are not interpretable.
+
+Visualize the cubic spline as follow:
+
+```{r}
+ggplot(Wage, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ splines::bs(x, df = 3))
+```
+
+## Generalized additive models
+Once you have detected a non-linear relationship in your data, the polynomial terms may not be flexible enough to capture the relationship, and spline terms require specifying the knots.
+
+Generalized additive models, or GAM, are a technique to automatically fit a spline regression. This can be done using the mgcv R package:
+
+```{r message=FALSE, warning=FALSE}
+library(mgcv)
+```
+
+#### Build the model
+```{r}
+model <- gam(wage ~ s(age), data = Wage)
+```
+
+#### Model performance
+```{r}
+GAMmodel <- data.frame(
+  name = 'Generalized additive model',
+  R2 = rsquare(model, data=Wage),
+  RMSE = rmse(model, data=Wage),
+  MAE = mae(model, data=Wage)
+)
+GAMmodel
+```
+
+```{r}
+glance(model) 
+```
+
+The term s(lstat) tells the gam() function to find the best knots for a spline term.
+
+Visualize the data:
+
+```{r}
+ggplot(Wage, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = gam, formula = y ~ s(x))
+```
+
+## Comparing the models
+From analyzing the RMSE and the R2 metrics of the different models, it can be seen that the polynomial regression, the spline regression and the generalized additive models outperform the linear regression model and the log transformation approaches.
+```{r}
+totalmodel <- do.call('rbind', list(linearmodel, polymodel, splinemodel, GAMmodel))
+totalmodel
+```
