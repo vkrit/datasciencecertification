@@ -1,0 +1,606 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Regression},
+            pdfauthor={Veerasak Kritsanapraphan},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Regression}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Veerasak Kritsanapraphan}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{1/17/2020}
+
+
+\begin{document}
+\maketitle
+
+\hypertarget{loading-required-r-packages}{%
+\subsubsection{Loading Required R
+packages}\label{loading-required-r-packages}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## ── Attaching packages ────────────────────── tidyverse 1.2.1 ──
+\end{verbatim}
+
+\begin{verbatim}
+## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3
+## ✓ tibble  2.1.3     ✓ dplyr   0.8.3
+## ✓ tidyr   1.0.0     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.4.0
+\end{verbatim}
+
+\begin{verbatim}
+## ── Conflicts ───────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(caret)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: lattice
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'caret'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:purrr':
+## 
+##     lift
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{theme_set}\NormalTok{(}\KeywordTok{theme_classic}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{preparing-the-data}{%
+\subsubsection{Preparing the data}\label{preparing-the-data}}
+
+We'll use the Boston data set {[}in MASS package{]}, for predicting the
+median house value (mdev), in Boston Suburbs, based on the predictor
+variable lstat (percentage of lower status of the population).
+
+We'll randomly split the data into training set (80\% for building a
+predictive model) and test set (20\% for evaluating the model).
+
+\hypertarget{load-the-data}{%
+\paragraph{Load the data}\label{load-the-data}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data}\NormalTok{(}\StringTok{"Boston"}\NormalTok{, }\DataTypeTok{package =} \StringTok{"MASS"}\NormalTok{)}
+
+\CommentTok{# Split the data into training and test set}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{training.samples <-}\StringTok{ }\NormalTok{Boston}\OperatorTok{$}\NormalTok{medv }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{createDataPartition}\NormalTok{(}\DataTypeTok{p =} \FloatTok{0.8}\NormalTok{, }\DataTypeTok{list =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{train.data  <-}\StringTok{ }\NormalTok{Boston[training.samples, ]}
+\NormalTok{test.data <-}\StringTok{ }\NormalTok{Boston[}\OperatorTok{-}\NormalTok{training.samples, ]}
+\end{Highlighting}
+\end{Shaded}
+
+First, visualize the scatter plot of the medv vs lstat variables as
+follow:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(train.data, }\KeywordTok{aes}\NormalTok{(lstat, medv) ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_smooth}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+\end{verbatim}
+
+\includegraphics{Polynomial-Regression_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+The above scatter plot suggests a non-linear relationship between the
+two variables
+
+In the following sections, we start by computing linear and non-linear
+regression models. Next, we'll compare the different models in order to
+choose the best one for our data.
+
+\hypertarget{linear-regression-linear-reg}{%
+\subsection{Linear regression
+\{linear-reg\}}\label{linear-regression-linear-reg}}
+
+The standard linear regression model equation can be written as medv =
+b0 + b1*lstat.
+
+\hypertarget{compute-linear-regression-model}{%
+\subsubsection{Compute linear regression
+model:}\label{compute-linear-regression-model}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Build the model}
+\NormalTok{model <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(medv }\OperatorTok{~}\StringTok{ }\NormalTok{lstat, }\DataTypeTok{data =}\NormalTok{ train.data)}
+\CommentTok{# Make predictions}
+\NormalTok{predictions <-}\StringTok{ }\NormalTok{model }\OperatorTok{%>%}\StringTok{ }\KeywordTok{predict}\NormalTok{(test.data)}
+\CommentTok{# Model performance}
+\KeywordTok{data.frame}\NormalTok{(}
+  \DataTypeTok{RMSE =} \KeywordTok{RMSE}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv),}
+  \DataTypeTok{R2 =} \KeywordTok{R2}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       RMSE        R2
+## 1 6.073002 0.5354403
+\end{verbatim}
+
+\hypertarget{visualize-the-data}{%
+\subsubsection{Visualize the data:}\label{visualize-the-data}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(train.data, }\KeywordTok{aes}\NormalTok{(lstat, medv) ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_smooth}\NormalTok{(}\DataTypeTok{method =}\NormalTok{ lm, }\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{x)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Polynomial-Regression_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\hypertarget{polynomial-regression}{%
+\subsubsection{Polynomial regression}\label{polynomial-regression}}
+
+The polynomial regression adds polynomial or quadratic terms to the
+regression equation as follow:
+
+medv=b0+b1∗lstat+b2∗lstat2
+
+In R, to create a predictor x\^{}2 you should use the function I(), as
+follow: I(x\^{}2). This raise x to the power 2.
+
+The polynomial regression can be computed in R as follow:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lm}\NormalTok{(medv }\OperatorTok{~}\StringTok{ }\NormalTok{lstat }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(lstat}\OperatorTok{^}\DecValTok{2}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ train.data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = medv ~ lstat + I(lstat^2), data = train.data)
+## 
+## Coefficients:
+## (Intercept)        lstat   I(lstat^2)  
+##    43.35115     -2.34018      0.04303
+\end{verbatim}
+
+An alternative simple solution is to use this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lm}\NormalTok{(medv }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(lstat, }\DecValTok{2}\NormalTok{, }\DataTypeTok{raw =} \OtherTok{TRUE}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ train.data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = medv ~ poly(lstat, 2, raw = TRUE), data = train.data)
+## 
+## Coefficients:
+##                 (Intercept)  poly(lstat, 2, raw = TRUE)1  
+##                    43.35115                     -2.34018  
+## poly(lstat, 2, raw = TRUE)2  
+##                     0.04303
+\end{verbatim}
+
+The following example computes a sixfth-order polynomial fit:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lm}\NormalTok{(medv }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(lstat, }\DecValTok{6}\NormalTok{, }\DataTypeTok{raw =} \OtherTok{TRUE}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ train.data) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summary}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = medv ~ poly(lstat, 6, raw = TRUE), data = train.data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -14.2327  -3.2366  -0.7399   2.0233  26.4959 
+## 
+## Coefficients:
+##                               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                  7.137e+01  5.999e+00  11.897  < 2e-16 ***
+## poly(lstat, 6, raw = TRUE)1 -1.445e+01  3.224e+00  -4.483 9.65e-06 ***
+## poly(lstat, 6, raw = TRUE)2  1.868e+00  6.263e-01   2.982  0.00304 ** 
+## poly(lstat, 6, raw = TRUE)3 -1.316e-01  5.731e-02  -2.296  0.02217 *  
+## poly(lstat, 6, raw = TRUE)4  4.984e-03  2.659e-03   1.874  0.06161 .  
+## poly(lstat, 6, raw = TRUE)5 -9.558e-05  6.034e-05  -1.584  0.11395    
+## poly(lstat, 6, raw = TRUE)6  7.291e-07  5.300e-07   1.376  0.16970    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.284 on 400 degrees of freedom
+## Multiple R-squared:  0.6836, Adjusted R-squared:  0.6789 
+## F-statistic:   144 on 6 and 400 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+From the output above, it can be seen that polynomial terms beyond the
+fith order are not significant. So, just create a fifth polynomial
+regression model as follow:
+
+\hypertarget{build-the-fifth-polynomial-model}{%
+\subsubsection{Build the fifth polynomial
+model}\label{build-the-fifth-polynomial-model}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(medv }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(lstat, }\DecValTok{5}\NormalTok{, }\DataTypeTok{raw =} \OtherTok{TRUE}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ train.data)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{make-predictions}{%
+\subsubsection{Make predictions}\label{make-predictions}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{predictions <-}\StringTok{ }\NormalTok{model }\OperatorTok{%>%}\StringTok{ }\KeywordTok{predict}\NormalTok{(test.data)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{model-performance}{%
+\subsubsection{Model performance}\label{model-performance}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data.frame}\NormalTok{(}
+  \DataTypeTok{RMSE =} \KeywordTok{RMSE}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv),}
+  \DataTypeTok{R2 =} \KeywordTok{R2}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      RMSE        R2
+## 1 4.96127 0.6887199
+\end{verbatim}
+
+Visualize the fith polynomial regression line as follow:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(train.data, }\KeywordTok{aes}\NormalTok{(lstat, medv) ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_smooth}\NormalTok{(}\DataTypeTok{method =}\NormalTok{ lm, }\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(x, }\DecValTok{5}\NormalTok{, }\DataTypeTok{raw =} \OtherTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Polynomial-Regression_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\hypertarget{log-transformation}{%
+\subsubsection{Log transformation}\label{log-transformation}}
+
+When you have a non-linear relationship, you can also try a logarithm
+transformation of the predictor variables:
+
+\hypertarget{build-the-model}{%
+\subsubsection{Build the model}\label{build-the-model}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(medv }\OperatorTok{~}\StringTok{ }\KeywordTok{log}\NormalTok{(lstat), }\DataTypeTok{data =}\NormalTok{ train.data)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{make-predictions-1}{%
+\subsubsection{Make predictions}\label{make-predictions-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{predictions <-}\StringTok{ }\NormalTok{model }\OperatorTok{%>%}\StringTok{ }\KeywordTok{predict}\NormalTok{(test.data)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{model-performance-1}{%
+\subsubsection{Model performance}\label{model-performance-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data.frame}\NormalTok{(}
+  \DataTypeTok{RMSE =} \KeywordTok{RMSE}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv),}
+  \DataTypeTok{R2 =} \KeywordTok{R2}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       RMSE        R2
+## 1 5.243127 0.6565156
+\end{verbatim}
+
+Visualize the data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(train.data, }\KeywordTok{aes}\NormalTok{(lstat, medv) ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_smooth}\NormalTok{(}\DataTypeTok{method =}\NormalTok{ lm, }\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\KeywordTok{log}\NormalTok{(x))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Polynomial-Regression_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\hypertarget{spline-regression}{%
+\subsubsection{Spline regression}\label{spline-regression}}
+
+Polynomial regression only captures a certain amount of curvature in a
+nonlinear relationship. An alternative, and often superior, approach to
+modeling nonlinear relationships is to use splines.
+
+Splines provide a way to smoothly interpolate between fixed points,
+called knots. Polynomial regression is computed between knots. In other
+words, splines are series of polynomial segments strung together,
+joining at knots.
+
+The R package splines includes the function bs for creating a b-spline
+term in a regression model.
+
+You need to specify two parameters: the degree of the polynomial and the
+location of the knots. We'll place the knots at the lower quartile, the
+median quartile, and the upper quartile:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knots <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{(train.data}\OperatorTok{$}\NormalTok{lstat, }\DataTypeTok{p =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.25}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.75}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+We'll create a model using a cubic spline (degree = 3):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(splines)}
+\CommentTok{# Build the model}
+\NormalTok{knots <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{(train.data}\OperatorTok{$}\NormalTok{lstat, }\DataTypeTok{p =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.25}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.75}\NormalTok{))}
+\NormalTok{model <-}\StringTok{ }\KeywordTok{lm}\NormalTok{ (medv }\OperatorTok{~}\StringTok{ }\KeywordTok{bs}\NormalTok{(lstat, }\DataTypeTok{knots =}\NormalTok{ knots), }\DataTypeTok{data =}\NormalTok{ train.data)}
+\CommentTok{# Make predictions}
+\NormalTok{predictions <-}\StringTok{ }\NormalTok{model }\OperatorTok{%>%}\StringTok{ }\KeywordTok{predict}\NormalTok{(test.data)}
+\CommentTok{# Model performance}
+\KeywordTok{data.frame}\NormalTok{(}
+  \DataTypeTok{RMSE =} \KeywordTok{RMSE}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv),}
+  \DataTypeTok{R2 =} \KeywordTok{R2}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       RMSE        R2
+## 1 4.970949 0.6881139
+\end{verbatim}
+
+Note that, the coefficients for a spline term are not interpretable.
+
+Visualize the cubic spline as follow:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(train.data, }\KeywordTok{aes}\NormalTok{(lstat, medv) ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_smooth}\NormalTok{(}\DataTypeTok{method =}\NormalTok{ lm, }\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\NormalTok{splines}\OperatorTok{::}\KeywordTok{bs}\NormalTok{(x, }\DataTypeTok{df =} \DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Polynomial-Regression_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+Generalized additive models Once you have detected a non-linear
+relationship in your data, the polynomial terms may not be flexible
+enough to capture the relationship, and spline terms require specifying
+the knots.
+
+Generalized additive models, or GAM, are a technique to automatically
+fit a spline regression. This can be done using the mgcv R package:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(mgcv)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: nlme
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'nlme'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:dplyr':
+## 
+##     collapse
+\end{verbatim}
+
+\begin{verbatim}
+## This is mgcv 1.8-28. For overview type 'help("mgcv-package")'.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Build the model}
+\NormalTok{model <-}\StringTok{ }\KeywordTok{gam}\NormalTok{(medv }\OperatorTok{~}\StringTok{ }\KeywordTok{s}\NormalTok{(lstat), }\DataTypeTok{data =}\NormalTok{ train.data)}
+\CommentTok{# Make predictions}
+\NormalTok{predictions <-}\StringTok{ }\NormalTok{model }\OperatorTok{%>%}\StringTok{ }\KeywordTok{predict}\NormalTok{(test.data)}
+\CommentTok{# Model performance}
+\KeywordTok{data.frame}\NormalTok{(}
+  \DataTypeTok{RMSE =} \KeywordTok{RMSE}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv),}
+  \DataTypeTok{R2 =} \KeywordTok{R2}\NormalTok{(predictions, test.data}\OperatorTok{$}\NormalTok{medv)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      RMSE        R2
+## 1 5.01729 0.6838236
+\end{verbatim}
+
+The term s(lstat) tells the gam() function to find the ``best'' knots
+for a spline term.
+
+\hypertarget{visualize-the-data-1}{%
+\subsubsection{Visualize the data:}\label{visualize-the-data-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(train.data, }\KeywordTok{aes}\NormalTok{(lstat, medv) ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_smooth}\NormalTok{(}\DataTypeTok{method =}\NormalTok{ gam, }\DataTypeTok{formula =}\NormalTok{ y }\OperatorTok{~}\StringTok{ }\KeywordTok{s}\NormalTok{(x))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Polynomial-Regression_files/figure-latex/unnamed-chunk-21-1.pdf}
+
+\hypertarget{comparing-the-models}{%
+\subsubsection{Comparing the models}\label{comparing-the-models}}
+
+From analyzing the RMSE and the R2 metrics of the different models, it
+can be seen that the polynomial regression, the spline regression and
+the generalized additive models outperform the linear regression model
+and the log transformation approaches.
+
+
+\end{document}

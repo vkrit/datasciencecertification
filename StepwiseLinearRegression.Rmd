@@ -82,3 +82,9 @@ both <- step(fullmod, direction="both")
 formula(both)
 summary(both)
 ```
+
+### Check Multicollinearity
+
+```{r}
+car::vif(both)
+```
