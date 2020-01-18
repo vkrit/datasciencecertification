@@ -1,0 +1,69 @@
+---
+title: "Probability"
+author: "Veerasak Kritsanapraphan"
+date: "1/18/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(prob)
+```
+
+
+```{r}
+## A is event pick red from 1st urn
+## B is event pick red from 2nd urn
+## Find B
+##
+## B    = S ∩ B 
+##      = (A ∪ ~A) ∩ B 
+##      = (A ∩ B) ∪ (~A ∩ B)
+### notice that A ∩ B and Ac ∩ B are disjoint
+## P(B) = P(A ∩ B) + P(~A ∩ B)
+###     = P(A) P(B|A) + P(~A)P(B|~A)
+
+L1 <- rep(c("red","green"), times = c(5,3))
+L2 <- rep(c("red","green"), times = c(2,6))
+L3 <- c(L2, "red")
+L4 <- c(L2, "green")
+print(L1)
+print(L2)
+print(L3)
+print(L4)
+M1 <- urnsamples(L1, size = 1, replace = TRUE, ordered = TRUE)
+M2 <- urnsamples(L2, size = 1, replace = TRUE, ordered = TRUE)
+M3 <- urnsamples(L3, size = 1, replace = TRUE, ordered = TRUE)
+M4 <- urnsamples(L4, size = 1, replace = TRUE, ordered = TRUE)
+print(M1)
+print(M2)
+print(M3)
+print(M4)
+```
+
+```{r}
+N1 <- probspace(M1)
+print(N1)
+N2 <- probspace(M2)
+print(N2)
+N3 <- probspace(M3)
+print(N3)
+N4 <- probspace(M4)
+print(N4)
+
+```
+
+```{r}
+PA <- Prob(N1, isrep(N1, "red", 1))
+print(PA)
+PnotA <- Prob(N1, isrep(N1, "green", 1))
+print(PnotA)
+PBgivenA <- Prob(N3, isrep(N3, "red", 1))
+print(PBgivenA)
+PBgivennotA <- Prob(N4, isrep(N4, "red",1))
+print(PBgivennotA)
+
+PA * PBgivenA + PnotA * PBgivennotA
+```
