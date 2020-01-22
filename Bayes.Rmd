@@ -1,0 +1,58 @@
+---
+title: "Bayes"
+author: "Veerasak Kritsanapraphan"
+date: "1/22/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## First Test
+```{r}
+p_pos_cancer <- 0.99
+p_cancer <- 0.01
+p_not_cancer <- 1 - 0.01
+p_pos_not_cancer <- 0.05
+
+# bayes theorem
+p_cancer_pos <- (p_pos_cancer*p_cancer) / (p_pos_cancer*p_cancer + p_pos_not_cancer*p_not_cancer)
+print(p_cancer_pos)
+```
+
+
+```{r}
+cancer <- sample(c('No','Yes'), size=1000000, replace=TRUE, prob=c(0.99,0.01))
+test <- rep(NA, 1000000)
+test[cancer=='No'] <- sample(c('Neg','Pos'), size=sum(cancer=='No'), replace=TRUE, prob=c(0.95,0.05))
+test[cancer=='Yes'] <- sample(c('Neg','Pos'), size=sum(cancer=='Yes'), replace=TRUE, prob=c(0.01,0.99))
+
+mean(cancer[test=='Pos']=='Yes')
+```
+
+## Second Test
+```{r}
+p_pos_cancer <- 0.99
+p_cancer <- p_cancer_pos
+p_not_cancer <- 1 - 0.01
+p_pos_not_cancer <- 0.05
+
+# bayes theorem
+p_cancer_second_pos <- (p_pos_cancer*p_cancer) / (p_pos_cancer*p_cancer + p_pos_not_cancer*p_not_cancer)
+print(p_cancer_second_pos)
+```
+
+## Third Test
+```{r}
+p_pos_cancer <- 0.99
+p_cancer <- p_cancer_second_pos
+p_not_cancer <- 1 - 0.01
+p_pos_not_cancer <- 0.05
+
+# bayes theorem
+p_cancer_third_pos <- (p_pos_cancer*p_cancer) / (p_pos_cancer*p_cancer + p_pos_not_cancer*p_not_cancer)
+print(p_cancer_third_pos)
+```
