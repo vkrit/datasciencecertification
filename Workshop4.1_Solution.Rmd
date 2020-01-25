@@ -1,0 +1,60 @@
+---
+title: "workshop 4.1 solution"
+author: "Veerasak Kritsanapraphan"
+date: "1/22/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(purrr)
+library(PerformanceAnalytics)
+telco <- read.csv("WA_Fn-UseC_-Telco-Customer-Churn.csv", header=TRUE)
+```
+
+
+```{r}
+str(telco)
+```
+
+### Exploratory Data Analysis
+
+### Plot Single Variable - Histogram
+```{r}
+# telco %>%
+#   keep(is.numeric) %>%                     # Keep only numeric columns
+#   gather() %>%                             # Convert to key-value pairs
+#   ggplot(aes(value)) +                     # Plot the values
+#     facet_wrap(~ key, scales = "free") +   # In separate panels
+#     geom_histogram(binwidth = 10) 
+```
+
+### Plot Single Variable - Density Curve
+```{r}
+telco %>%
+  keep(is.numeric) %>%                     # Keep only numeric columns
+  gather() %>%                             # Convert to key-value pairs
+  ggplot(aes(value)) +                     # Plot the values
+    facet_wrap(~ key, scales = "free") +   # In separate panels
+    geom_density()
+```
+## Bar Plot
+```{r}
+telco %>%
+  keep(is.factor) %>%                     # Keep only numeric columns
+  gather() %>%                             # Convert to key-value pairs
+  ggplot(aes(value)) +                     # Plot the values
+    facet_wrap(~ key, scales = "free") +   # In separate panels
+    geom_bar()
+```
+
+## Covariation
+```{r}
+boxplot(MonthlyCharges ~ Churn, data=telco)
+boxplot(tenure ~ Churn, data=telco)
+```
+

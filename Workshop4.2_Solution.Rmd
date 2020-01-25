@@ -1,0 +1,76 @@
+---
+title: "workshop 4.2 solution"
+author: "Veerasak Kritsanapraphan"
+date: "1/22/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r message=FALSE, warning=FALSE}
+telco <- read.csv("WA_Fn-UseC_-Telco-Customer-Churn.csv", header=TRUE)
+```
+
+
+```{r}
+str(telco)
+```
+
+## Convert Data
+
+### Data Sampling
+```{r}
+index <- sample(2, nrow(telco), replace=TRUE, prob=c(0.7,0.3) )
+traindata <- telco[index==1,]
+testdata <- telco[index==2,]
+sprintf("Number of Record in Training Dataset is %d" , nrow(traindata))
+sprintf("Number of Record in Testing Dataset is %d" , nrow(testdata))
+```
+
+<!-- ### Check Missing -->
+<!-- ```{r} -->
+<!-- sapply(telco, anyNA) -->
+<!-- ``` -->
+### Normalize Data
+```{r message=FALSE, warning=FALSE}
+library(BBmisc)
+print(head(telco[,c("tenure","MonthlyCharges","TotalCharges")]))
+normalizedcolumns <- normalize(telco[,c("tenure","MonthlyCharges","TotalCharges")], method="standardize")
+print(head(normalizedcolumns))
+```
+
+### Factor to Number
+```{r message=FALSE, warning=FALSE}
+library(fastDummies)
+telcoconv <- dummy_cols(telco[,"Churn"])
+head(telcoconv)
+```
+
+### Numeric to Factor
+```{r message=FALSE, warning=FALSE}
+library(arules)
+x <- telco[,"tenure"]
+discretize(x, breaks = 5)
+```
+
+## PCA
+```{r message=FALSE, warning=FALSE}
+library(e1071)
+library(ggbiplot)
+ir.churn <- telco[, "Churn"]
+telcosmall <- telco[,c("tenure","MonthlyCharges","TotalCharges")]
+telcosmallfix <- impute(telcosmall, what="mean" )
+ir.pca <- prcomp(telcosmallfix, center=TRUE,scale.=TRUE)
+print(ir.pca)
+summary(ir.pca)
+```
+### Plot graph PCA
+```{r}
+g <- ggbiplot(ir.pca, obs.scale = 1, var.scale = 1,
+              groups = ir.churn, ellipse =TRUE,
+              circle=TRUE)
+g <- g + scale_color_discrete(name = '')
+g <- g + theme(legend.direction = 'horizontal', 
+               legend.position = 'top')
+print(g)
+```
