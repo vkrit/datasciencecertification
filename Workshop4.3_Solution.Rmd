@@ -1,0 +1,85 @@
+---
+title: "workshop 4.3 solution"
+author: "Veerasak Kritsanapraphan"
+date: "1/22/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r message=FALSE, warning=FALSE}
+library(party)
+telco <- read.csv("WA_Fn-UseC_-Telco-Customer-Churn.csv", header=TRUE)
+```
+
+
+```{r}
+str(telco)
+```
+
+## Convert Data
+
+### Data Sampling
+```{r}
+index <- sample(2, nrow(telco), replace=TRUE, prob=c(0.7,0.3) )
+traindata <- telco[index==1,]
+testdata <- telco[index==2,]
+sprintf("Number of Record in Training Dataset is %d" , nrow(traindata))
+sprintf("Number of Record in Testing Dataset is %d" , nrow(testdata))
+```
+
+### Train Model
+```{r}
+formular <- Churn ~ gender + SeniorCitizen + Partner + tenure + PhoneService + MultipleLines + OnlineBackup + Contract + PaperlessBilling + PaymentMethod + MonthlyCharges + TotalCharges
+ctree_model <- ctree(formular, data = traindata)
+print(ctree_model)
+```
+
+### Plot Model
+```{r}
+plot(ctree_model, type="simple")
+```
+
+### Evaluate Model
+```{r}
+confusionmatrix <- table(predict(ctree_model), traindata$Churn)
+confusionmatrix
+(confusionmatrix[1,1]+confusionmatrix[2,2])/
+  (confusionmatrix[1,1]+confusionmatrix[2,2]+confusionmatrix[1,2]+confusionmatrix[2,1])
+```
+
+### Stratify Sample
+```{r}
+library(fifer)
+stratefytelco <- stratified(telco, "Churn", size = c(1500, 1500))
+table(stratefytelco$Churn)
+```
+
+### Data Sampling
+```{r}
+index <- sample(2, nrow(stratefytelco), replace=TRUE, prob=c(0.7,0.3) )
+traindata <- stratefytelco[index==1,]
+testdata <- stratefytelco[index==2,]
+sprintf("Number of Record in Training Dataset is %d" , nrow(traindata))
+sprintf("Number of Record in Testing Dataset is %d" , nrow(testdata))
+```
+
+### Train Model
+```{r}
+formular <- Churn ~ gender + SeniorCitizen + Partner + tenure + PhoneService + MultipleLines + OnlineBackup + Contract + PaperlessBilling + PaymentMethod + MonthlyCharges + TotalCharges
+ctree_model <- ctree(formular, data = traindata)
+print(ctree_model)
+```
+
+### Plot Model
+```{r}
+plot(ctree_model, type="simple")
+```
+
+### Evaluate Model
+```{r}
+confusionmatrix <- table(predict(ctree_model), traindata$Churn)
+confusionmatrix
+(confusionmatrix[1,1]+confusionmatrix[2,2])/
+  (confusionmatrix[1,1]+confusionmatrix[2,2]+confusionmatrix[1,2]+confusionmatrix[2,1])
+```
