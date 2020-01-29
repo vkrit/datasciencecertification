@@ -1,0 +1,56 @@
+---
+title: "workshop 4.7 solution"
+author: "Veerasak Kritsanapraphan"
+date: "1/22/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r message=FALSE, warning=FALSE}
+library(class)
+library(caret)
+library(e1071)
+library(fastDummies)
+library(dplyr)
+telco <- read.csv("WA_Fn-UseC_-Telco-Customer-Churn.csv", header=TRUE)
+```
+
+
+```{r}
+str(telco)
+```
+
+## Convert Data
+
+### Dummy Column
+```{r}
+telcodum <- select(telco, Churn, gender,SeniorCitizen,Partner,tenure,PhoneService, MultipleLines,OnlineBackup,Contract,PaperlessBilling,PaymentMethod, MonthlyCharges ,TotalCharges)
+telcodum <- dummy_cols(telcodum)
+```
+
+### Data Sampling
+```{r}
+index <- sample(2, nrow(telcodum), replace=TRUE, prob=c(0.7,0.3) )
+traindata <- telcodum[index==1,]
+testdata <- telcodum[index==2,]
+sprintf("Number of Record in Training Dataset is %d" , nrow(traindata))
+sprintf("Number of Record in Testing Dataset is %d" , nrow(testdata))
+```
+
+### Train Model  
+```{r}  
+formula <- Churn ~ .
+output_telco_train <- traindata[,'Churn']
+input_telco_train <- traindata[, c(12,36)]
+input_telco_test <- testdata[, c(12,36)] 
+output_telco_test <- testdata[,'Churn']
+
+svm_model <- svm(x=input_telco_train, y=output_telco_train, scale = FALSE,  kernal='polynomial', method="C-classification")  
+```  
+
+### Evaluate Testing Model  
+```{r}
+prediction <- predict(svm_model, input_telco_test, propability=T)
+confusionMatrix(prediction, output_telco_test)  
+```  

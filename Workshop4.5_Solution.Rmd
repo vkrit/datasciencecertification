@@ -1,0 +1,51 @@
+---
+title: "workshop 4.5 solution"
+author: "Veerasak Kritsanapraphan"
+date: "1/22/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r message=FALSE, warning=FALSE}
+library(e1071)
+library(caret)
+telco <- read.csv("WA_Fn-UseC_-Telco-Customer-Churn.csv", header=TRUE)
+```
+
+
+```{r}
+str(telco)
+```
+
+## Convert Data
+
+### Data Sampling
+```{r}
+index <- sample(2, nrow(telco), replace=TRUE, prob=c(0.7,0.3) )
+traindata <- telco[index==1,]
+testdata <- telco[index==2,]
+sprintf("Number of Record in Training Dataset is %d" , nrow(traindata))
+sprintf("Number of Record in Testing Dataset is %d" , nrow(testdata))
+```
+
+### Train Model
+```{r}
+formular <- Churn ~ gender + SeniorCitizen + Partner + tenure + PhoneService + MultipleLines + OnlineBackup + Contract + PaperlessBilling + PaymentMethod + MonthlyCharges + TotalCharges
+bayes_model <- naiveBayes(formular, data = traindata)
+bayes_model
+```
+
+
+### Evaluate Model
+```{r}
+prediction <- predict(bayes_model, newdata=traindata)
+confusionMatrix(prediction, traindata$Churn)
+```
+
+### Evaluate Testing Model
+```{r}
+prediction <- predict(bayes_model, newdata=testdata)
+confusionMatrix(prediction, testdata$Churn)
+
+```
