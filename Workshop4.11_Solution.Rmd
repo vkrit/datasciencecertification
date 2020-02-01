@@ -1,0 +1,56 @@
+---
+title: "Workshop 4.11 Solution"
+author: "Veerasak Kritsanapraphan"
+date: "2/1/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r message=FALSE, warning=FALSE}
+library(stats)
+library(caret)
+library(e1071)
+library(fastDummies)
+library(dplyr)
+telco <- read.csv("WA_Fn-UseC_-Telco-Customer-Churn.csv", header=TRUE)
+```
+
+### Remove NA
+```{r}
+str(telco)
+telco <- na.omit(telco)
+```
+
+### Dummy Column
+```{r}
+telcodum <- select(telco, Churn, gender,SeniorCitizen,Partner,tenure,PhoneService, MultipleLines,OnlineBackup,Contract,PaperlessBilling,PaymentMethod, MonthlyCharges ,TotalCharges)
+telcodum <- dummy_cols(telcodum)
+```
+
+### K-Mean Clustering 
+```{r}  
+output_telco_train <- telcodum[,'Churn']
+input_telco_train <- telcodum[, c(5,12:36)]
+set.seed(123)
+km <- kmeans(input_telco_train, 2)  
+```  
+
+### See how it cluster
+```{r}
+table(km$cluster, telcodum$Churn)
+```
+
+## Second Round
+```{r}
+set.seed(500)
+km <- kmeans(input_telco_train, 2)  
+table(km$cluster, telcodum$Churn)
+```
+
+## Try Parameter
+```{r}
+set.seed(123444)
+km <- kmeans(input_telco_train, 2, iter.max = 100, nstart = 25)
+table(km$cluster, telcodum$Churn)
+```

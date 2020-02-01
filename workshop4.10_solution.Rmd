@@ -1,0 +1,240 @@
+---
+title: "Linear Regression Prediction"
+author: "Veerasak Kritsanapraphan"
+date: "2/1/2020"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Loading Required R packages
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(modelr)
+library(broom)
+library(dplyr)
+library(ggplot2)
+```
+
+#### Load the data
+```{r}
+data("Wage", package = "ISLR")
+```
+
+### Data Sampling
+```{r}
+set.seed(123)
+index <- sample(2, nrow(Wage), replace=TRUE, prob=c(0.7,0.3) )
+traindata <- Wage[index==1,]
+testdata <- Wage[index==2,]
+sprintf("Number of Record in Training Dataset is %d" , nrow(traindata))
+sprintf("Number of Record in Testing Dataset is %d" , nrow(testdata))
+```
+
+### Compute linear regression model:
+
+### Build the model
+```{r}
+model <- lm(wage ~ age, data = traindata)
+```
+
+### Model performance
+```{r}
+linearmodel <- data.frame(
+  name = 'Linear Regression model',
+  R2 = rsquare(model, data=testdata),
+  RMSE = rmse(model, data=testdata),
+  MAE = mae(model, data=testdata),
+  P.value = glance(model)$p.value
+)
+linearmodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
+### Visualize the data:
+
+```{r}
+
+ggplot(testdata, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ x)
+```
+
+## Polynomial regression
+
+```{r}
+lm(wage ~ age + I(age^2), data = traindata)
+```
+
+An alternative simple solution is to use this:
+
+```{r}
+lm(wage ~ poly(age, 2, raw = TRUE), data = traindata)
+```
+
+The following example computes a sixfth-order polynomial fit:
+
+```{r}
+lm(wage ~ poly(age, 6, raw = TRUE), data = traindata) %>%
+  summary()
+```
+
+### Build the fifth polynomial model
+
+```{r}
+model <- lm(wage ~ poly(age, 5, raw = TRUE), data = traindata)
+```
+
+### Model performance
+```{r}
+polymodel <- data.frame(
+  name = 'Polynomial Regression model',
+  R2 = rsquare(model, data=testdata),
+  RMSE = rmse(model, data=testdata),
+  MAE = mae(model, data=testdata),
+  P.value = glance(model)$p.value
+)
+polymodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
+Visualize the fith polynomial regression line as follow:
+
+```{r}
+ggplot(testdata, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ poly(x, 5, raw = TRUE))
+```
+
+## Log transformation
+
+### Build the model
+```{r}
+model <- lm(wage ~ log(age), data = traindata)
+```
+
+### Model performance
+```{r}
+logmodel <- data.frame(
+  name = 'Log Transform Regression model',
+  R2 = rsquare(model, data=testdata),
+  RMSE = rmse(model, data=testdata),
+  MAE = mae(model, data=testdata),
+  P.value = glance(model)$p.value
+)
+logmodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
+Visualize the data:
+```{r}
+ggplot(Wage, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ log(x))
+```
+
+## Spline regression
+
+
+```{r}
+knots <- quantile(traindata$age, p = c(0.25, 0.5, 0.75))
+```
+
+We’ll create a model using a cubic spline (degree = 3):
+
+```{r message=FALSE, warning=FALSE}
+library(splines)
+```
+#### Build the model
+```{r}
+knots <- quantile(traindata$age, p = c(0.25, 0.5, 0.75))
+model <- lm (wage ~ bs(age, knots = knots), data = traindata)
+```
+
+#### Model performance
+```{r}
+splinemodel <- data.frame(
+  name = 'Splines model',
+  R2 = rsquare(model, data=testdata),
+  RMSE = rmse(model, data=testdata),
+  MAE = mae(model, data=testdata),
+  P.value = glance(model)$p.value
+)
+splinemodel
+```
+
+```{r}
+glance(model) %>%
+  dplyr::select(r.squared, adj.r.squared, sigma, AIC, BIC, p.value)
+```
+
+Visualize the cubic spline as follow:
+
+```{r}
+ggplot(testdata, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ splines::bs(x, df = 3))
+```
+
+## Generalized additive models
+
+```{r message=FALSE, warning=FALSE}
+library(mgcv)
+```
+
+#### Build the model
+```{r}
+model <- gam(wage ~ s(age), data = traindata)
+```
+
+#### Model performance
+```{r}
+r <- capture.output(gam.check(model))
+p <- strsplit(r[12], " ")[[1]][11]
+
+GAMmodel <- data.frame(
+  name = 'Generalized additive model',
+  R2 = rsquare(model, data=testdata),
+  RMSE = rmse(model, data=testdata),
+  MAE = mae(model, data=testdata),
+  P.value = p
+)
+GAMmodel
+```
+
+```{r}
+glance(model) 
+```
+
+Visualize the data:
+
+```{r}
+ggplot(testdata, aes(age, wage) ) +
+  geom_point() +
+  stat_smooth(method = gam, formula = y ~ s(x))
+```
+
+## Comparing the models
+
+```{r}
+totalmodel <- do.call('rbind', list(linearmodel, polymodel, splinemodel, GAMmodel))
+totalmodel
+```

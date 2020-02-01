@@ -6,6 +6,7 @@ library(neuralnet)
 library(fastDummies)
 library(BBmisc)
 library(dplyr)
+
 telco <- read.csv("WA_Fn-UseC_-Telco-Customer-Churn.csv", header=TRUE)
 
 telcodum <- select(telco, Churn, gender,SeniorCitizen,Partner,tenure,PhoneService, MultipleLines,OnlineBackup,Contract,PaperlessBilling,PaymentMethod, MonthlyCharges ,TotalCharges)
