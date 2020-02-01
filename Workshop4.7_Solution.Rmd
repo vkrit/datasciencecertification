@@ -27,6 +27,7 @@ str(telco)
 ```{r}
 telcodum <- select(telco, Churn, gender,SeniorCitizen,Partner,tenure,PhoneService, MultipleLines,OnlineBackup,Contract,PaperlessBilling,PaymentMethod, MonthlyCharges ,TotalCharges)
 telcodum <- dummy_cols(telcodum)
+str(telcodum)
 ```
 
 ### Data Sampling
@@ -46,7 +47,14 @@ input_telco_train <- traindata[, c(12,36)]
 input_telco_test <- testdata[, c(12,36)] 
 output_telco_test <- testdata[,'Churn']
 
-svm_model <- svm(x=input_telco_train, y=output_telco_train, scale = FALSE,  kernal='polynomial', method="C-classification")  
+
+svm_model <- svm(x=input_telco_train, y=output_telco_train,  kernal='linear', scale=FALSE, method="C-classification")  
+print(svm_model)
+summary(svm_model)
+svm_model$performances
+
+# Find the best SVM model
+svmfit <- svm_model$best.model
 ```  
 
 ### Evaluate Testing Model  
