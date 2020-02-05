@@ -1,0 +1,86 @@
+---
+title: "Workshop 4.12 Solution"
+author: "Veerasak Kritsanapraphan"
+date: "2/1/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r message=FALSE, warning=FALSE}
+library(stats)
+library(caret)
+library(e1071)
+library(fastDummies)
+library(dplyr)
+library(BBmisc)
+telco <- read.csv("WA_Fn-UseC_-Telco-Customer-Churn.csv", header=TRUE)
+```
+
+### Remove NA
+```{r}
+telco <- na.omit(telco)
+```
+
+### Dummy Column
+```{r}
+telcodum <- select(telco, Churn, gender,SeniorCitizen,Partner,tenure,PhoneService, MultipleLines,OnlineBackup,Contract,PaperlessBilling,PaymentMethod, MonthlyCharges ,TotalCharges)
+telcodum <- dummy_cols(telcodum)
+
+
+```
+
+### Hirarchical Clustering 
+```{r}  
+set.seed(123)
+sampletelco <- telcodum[sample(1:nrow(telcodum), 50),]
+
+output_telco_train <- sampletelco[,'Churn']
+input_telco_train <- sampletelco[, c(5,12:36)]
+input_telco_train$tenure <- normalize(input_telco_train$tenure, method="standardize")
+input_telco_train$MonthlyCharges <- normalize(input_telco_train$MonthlyCharges, method="standardize")
+input_telco_train$TotalCharges <- normalize(input_telco_train$TotalCharges, method="standardize")
+
+str(input_telco_train)
+```
+
+### Distance Function
+```{r}
+distance <- dist(input_telco_train, method="binary")
+cluster <- hclust(distance, method="average")
+plot(cluster, hang=-1, sampletelco$Churn)
+```  
+
+### See how it cluster
+```{r}
+group.2 <- cutree(cluster, k = 2)  # prune the tree by 3 clusters
+table(group.2, sampletelco$Churn) # compare with known classes
+```
+
+```{r}
+group.2
+```
+
+## Plot Graph
+```{r}
+plot(input_telco_train[,c(1,2)], col=group.2, pch=21, cex=1.5, main="2 clusters")
+points(input_telco_train[,c(1,2)], col=sampletelco$Churn, pch=21, cex=1)
+```
+
+## Plot Graph
+```{r}
+plot(input_telco_train[,c(5,6)], col=group.2, pch=19, cex=1.5, main="2 clusters")
+points(input_telco_train[,c(5,6)], col=sampletelco$Churn, pch=19, cex=1)
+```
+
+## Plot Graph
+```{r}
+plot(input_telco_train[,c(6,7)], col=group.2, pch=24, cex=1.5, main="2 clusters")
+points(input_telco_train[,c(6,7)], col=sampletelco$Churn, pch=24, cex=1)
+```
+
+## Plot Graph
+```{r}
+plot(input_telco_train[,c(8,9)], col=group.2, pch=25, cex=1.5, main="2 clusters")
+points(input_telco_train[,c(8,9)], col=sampletelco$Churn, pch=25, cex=1)
+```
