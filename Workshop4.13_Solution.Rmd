@@ -1,0 +1,56 @@
+---
+title: "Workshop 4.13 Solution"
+author: "Veerasak Kritsanapraphan"
+date: "2/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(recommenderlab)
+library(reshape2)
+```
+
+## Import Data
+
+```{r}
+retail <- readRDS("retail.rds")
+```
+
+## Explore Data
+
+```{r}
+str(retail)
+```
+
+## Split Data
+```{r}
+index = sample(2, nrow(retail), replace = TRUE, prob = c(0.3,0.7))
+train = retail[index == 1,]
+test = retail[index == 2,]
+traing <- acast(train, CustomerID ~ Description)
+class(traing)
+R <- as.matrix(traing)
+trainreal <- as(R, "realRatingMatrix")
+trainreal
+
+testg <- acast(test, CustomerID ~ Description)
+class(testg)
+S <- as.matrix(testg)
+testreal <- as(S, "realRatingMatrix")
+testreal
+
+```
+
+## Create Recommender Model
+```{r}
+recommender <- Recommender(trainreal, method = 'POPULAR')
+recommender
+```
+
+## Sample Prediction
+```{r}
+pred <- predict(recommender, newdata=trainreal[100:101], n=10)
+print(pred)
+as(pred, "list")
+```
