@@ -1,0 +1,70 @@
+---
+title: "Workshop 4.17 Solution"
+author: "Veerasak Kritsanapraphan"
+date: "February 15, 2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include = FALSE}
+# my global options defined for each code chunk.
+knitr::opts_chunk$set(fig.width=7, fig.height=5, warning=FALSE, message=FALSE, comment = '')
+```
+
+## Load recommenderlab
+
+``` {r}
+library(dplyr)
+library(ggplot2)
+library(recommenderlab)
+```
+
+Some of the preloaded datasets that come with `recommenderlab` for learning and exploring. 
+
+``` {r}
+help(package = "recommenderlab")
+datasets_available <- data(package = "recommenderlab")
+datasets_available$results[,4] # titles
+```
+
+We'll work with the already available *Jester* dataset.
+
+``` {r}
+data("Jester5k") # loads dataset
+class(Jester5k)
+jester_r <- Jester5k 
+remove(Jester5k)
+```
+
+## Recommender Algorithms Available
+
+The recommender algorithms are stored in a registry object called `recommenderRegistry`. We can get a look at the different models based on the different matrix types.
+
+``` {r}
+names(recommenderRegistry$get_entries())
+```
+
+### Split Data
+```{r}
+train <- jester_r[1:500]
+test <- jester_r[501:502]
+```
+
+### Create Hybrid Recommender
+```{r}
+recom <- HybridRecommender(
+  Recommender(train, method = "POPULAR"),
+  Recommender(train, method = "RANDOM"),
+  Recommender(train, method = "UBCF"),
+  weights = c(.2, .3, .5)
+)
+recom
+```
+
+### Prediction
+```{r}
+as(predict(recom, test), "list")
+```
+
+
