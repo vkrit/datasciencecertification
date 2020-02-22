@@ -1,14 +1,8 @@
 ---
-title: "Collaborative Filtering Recommender System"
+title: "Workshop 4.16 Solution"
 author: "Veerasak Kritsanapraphan"
 date: "February 15, 2020"
 output:
-  word_document:
-    toc: yes
-    toc_depth: '3'
-  html_document:
-    toc: yes
-    toc_depth: 3
 ---
 
 ```{r setup, include = FALSE}
