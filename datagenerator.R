@@ -13,20 +13,7 @@ use_session_with_seed(7777,
                       disable_gpu = FALSE,
                       disable_parallel_cpu = FALSE)
 
-files <- fs::dir_ls(path = "data_1/speech_commands_v0.01/",
-                    recursive = TRUE,
-                    glob = "*.wav")
-
-files <- files[!str_detect(files, "background_noise")]
-
-df <- data_frame(
-  fname = files,
-  class = fname %>%
-    str_extract("1/.*/") %>%
-    str_replace_all("1/", "") %>%
-    str_replace_all("/", ""),
-  class_id = class %>% as.factor() %>% as.integer() - 1L
-)
+df <- readRDS("data/df.rds") %>% sample_frac(1)
 
 batch_size <- 32
 buffer_size <- nrow(df)
