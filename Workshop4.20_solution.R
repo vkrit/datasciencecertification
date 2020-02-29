@@ -1,13 +1,24 @@
-reticulate::use_condaenv(condaenv="r-deeplearning", 
-                         conda="/Users/kris/anaconda3/bin/conda", 
-                         required=TRUE)
 
 
 library(keras)
 #use_implementation("tensorflow")
 
 library(tensorflow)
-#tfe_enable_eager_execution(device_policy = "silent")
+tfe_enable_eager_execution(device_policy = "silent")
+
+library(tfdatasets)
+
+install_tensorflow(method = "conda", version = "1.12", 
+                   envname = "r-deeplearning1")
+
+reticulate::use_condaenv(condaenv="r-deeplearning1", 
+                         conda="/Users/kris/anaconda3/bin/conda", 
+                         required=TRUE)
+library(keras)
+#use_implementation("tensorflow")
+
+library(tensorflow)
+tfe_enable_eager_execution(device_policy = "silent")
 
 library(tfdatasets)
 
